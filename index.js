@@ -5,8 +5,8 @@ const sleep = promisify(setTimeout)
 
 function closeWithGrace (opts, fn) {
   const delay = opts.delay ? opts.delay : 10000
-  process.on('SIGTERM', onSignal)
-  process.on('SIGINT', onSignal)
+  process.once('SIGTERM', onSignal)
+  process.once('SIGINT', onSignal)
 
   function onSignal (signal) {
     run({ signal })

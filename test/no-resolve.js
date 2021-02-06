@@ -6,6 +6,7 @@ const closeWithGrace = require('..')
 const immediate = promisify(setImmediate)
 
 closeWithGrace({ delay: 500 }, function ({ signal, err }) {
+  console.log('fn called')
   // this promise never resolves, so the delay should kick in
   return new Promise(() => {})
 })
