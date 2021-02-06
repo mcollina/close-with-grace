@@ -1,16 +1,27 @@
 'use strict'
 
-function closeWithGrace (opts, fn) {
+const { promisify } = require('util')
+const sleep = promisify(setTimeout)
 
+function closeWithGrace (opts, fn) {
+  const delay = opts.delay ? opts.delay : 10000
   process.on('SIGTERM', onSignal)
+  process.on('SIGINT', onSignal)
 
   function onSignal (signal) {
-    fn({ signal }).then(next, next)
+    run({ signal })
   }
 
-  function next (err) {
-    if (err) {
-      console.error(err)
+  async function run (out) {
+    try {
+      await Promise.race([
+        // We create the timer first as fn
+        // might block the event loop
+        sleep(delay),
+        fn(out)
+      ])
+    } catch (err) {
+      console.log(err)
     }
     process.exit(1)
   }
