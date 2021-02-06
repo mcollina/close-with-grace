@@ -1,0 +1,29 @@
+{
+  "name": "close-with-grace",
+  "version": "0.0.1",
+  "description": "Exit your process, gracefully (if possible)",
+  "main": "index.js",
+  "dependencies": {
+    "tape": "^5.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "tape test/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mcollina/close-with-grace.git"
+  },
+  "keywords": [
+    "graceful",
+    "shutdown",
+    "close",
+    "exit"
+  ],
+  "author": "Matteo Collina <hello@matteocollina.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mcollina/close-with-grace/issues"
+  },
+  "homepage": "https://github.com/mcollina/close-with-grace#readme"
+}
