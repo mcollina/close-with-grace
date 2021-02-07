@@ -66,6 +66,7 @@ for (const signal of ['SIGTERM', 'SIGINT']) {
 
     // one line to kickstart the test
     await once(child.stderr, 'readable')
+    child.stderr.read()
     t.pass('readable emitted')
 
     const now = Date.now()
@@ -77,12 +78,16 @@ for (const signal of ['SIGTERM', 'SIGINT']) {
     const out = all(child.stdout)
     out.catch(() => {})
 
+    const err = all(child.stderr)
+    err.catch(() => {})
+
     child.kill(signal)
 
     const [code, signalOut] = await once(child, 'close')
     t.is(code, 1)
     t.is(signalOut, null)
     t.is(await out, 'fn called\n')
+    t.is(await err, `second ${signal}, exiting\n`)
     t.is(Date.now() - now < 500, true)
   })
 }
