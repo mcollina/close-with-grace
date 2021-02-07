@@ -4,6 +4,10 @@ const { promisify } = require('util')
 const sleep = promisify(setTimeout)
 
 function closeWithGrace (opts, fn) {
+  if (typeof opts === 'function') {
+    fn = opts
+    opts = {}
+  }
   const delay = opts.delay ? opts.delay : 10000
   process.once('SIGTERM', onSignal)
   process.once('SIGINT', onSignal)

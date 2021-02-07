@@ -59,6 +59,26 @@ for (const signal of ['SIGTERM', 'SIGINT']) {
     t.is(await out, signal + '\n')
   })
 
+  test(`no delay, close gracefully (${signal})`, async (t) => {
+    const child = fork(join(__dirname, 'no-delay.js'), {
+      stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+    })
+
+    // one line to kickstart the test
+    await once(child.stderr, 'readable')
+    t.pass('readable emitted')
+
+    const out = all(child.stdout)
+    out.catch(() => {})
+
+    child.kill(signal)
+
+    const [code, signalOut] = await once(child, 'close')
+    t.is(code, 1)
+    t.is(signalOut, null)
+    t.is(await out, signal + '\n')
+  })
+
   test(`a secong signal (${signal}) close abruptly`, async (t) => {
     const child = fork(join(__dirname, 'no-resolve.js'), {
       stdio: ['pipe', 'pipe', 'pipe', 'ipc']
