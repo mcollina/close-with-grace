@@ -80,8 +80,8 @@ for (const signal of ['SIGTERM', 'SIGINT']) {
     child.kill(signal)
 
     const [code, signalOut] = await once(child, 'close')
-    t.is(code, null)
-    t.is(signalOut, signal)
+    t.is(code, 1)
+    t.is(signalOut, null)
     t.is(await out, 'fn called\n')
     t.is(Date.now() - now < 500, true)
   })

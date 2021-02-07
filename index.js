@@ -10,6 +10,13 @@ function closeWithGrace (opts, fn) {
 
   function onSignal (signal) {
     run({ signal })
+    process.on('SIGTERM', afterFirst)
+    process.on('SIGINT', afterFirst)
+  }
+
+  function afterFirst (signal) {
+    console.error(`second ${signal}, exiting`)
+    process.exit(1)
   }
 
   async function run (out) {
@@ -21,7 +28,7 @@ function closeWithGrace (opts, fn) {
         fn(out)
       ])
     } catch (err) {
-      console.log(err)
+      console.error(err)
     }
     process.exit(1)
   }
