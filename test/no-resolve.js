@@ -1,9 +1,6 @@
 'use strict'
 
-const { promisify } = require('util')
 const closeWithGrace = require('..')
-
-const immediate = promisify(setImmediate)
 
 closeWithGrace({ delay: 500 }, function ({ signal, err }) {
   console.log('fn called')

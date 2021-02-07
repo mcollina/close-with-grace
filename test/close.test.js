@@ -111,3 +111,18 @@ for (const signal of ['SIGTERM', 'SIGINT']) {
     t.is(Date.now() - now < 500, true)
   })
 }
+
+for (const event of ['uncaughtException', 'unhandledRejection']) {
+  test(`close gracefully (${event})`, async (t) => {
+    const child = fork(join(__dirname, event + '.js'), {
+      stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+    })
+
+    const out = all(child.stdout)
+
+    const [code, signalOut] = await once(child, 'close')
+    t.is(code, 1)
+    t.is(signalOut, null)
+    t.is(await out, 'kaboom\n')
+  })
+}
