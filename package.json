@@ -3,12 +3,18 @@
   "version": "0.0.1",
   "description": "Exit your process, gracefully (if possible)",
   "main": "index.js",
-  "dependencies": {
+  "devDependencies": {
+    "husky": "^4.3.8",
+    "standard": "^16.0.3",
     "tape": "^5.1.1"
   },
-  "devDependencies": {},
   "scripts": {
-    "test": "tape test/*.test.js"
+    "test": "standard && tape test/*.test.js"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test"
+    }
   },
   "repository": {
     "type": "git",

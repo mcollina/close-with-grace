@@ -28,7 +28,7 @@ function closeWithGrace (opts, fn) {
   }
 
   function afterFirstError (err) {
-    console.error(`second error, exiting`)
+    console.error('second error, exiting')
     console.error(err)
     process.exit(1)
   }

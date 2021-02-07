@@ -4,14 +4,11 @@ const test = require('tape')
 const { fork } = require('child_process')
 const { join } = require('path')
 const { once } = require('events')
-const { promisify } = require('util')
-
-const immediate = promisify(setImmediate)
 
 async function all (stream) {
   stream.setEncoding('utf8')
   let data = ''
-  for await (let chunk of stream) {
+  for await (const chunk of stream) {
     data += chunk
   }
   return data
