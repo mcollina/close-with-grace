@@ -51,7 +51,7 @@ for (const signal of ['SIGTERM', 'SIGINT']) {
     child.kill(signal)
 
     const [code, signalOut] = await once(child, 'close')
-    t.is(code, 1)
+    t.is(code, 0)
     t.is(signalOut, null)
     t.is(await out, signal + '\n')
   })
@@ -71,7 +71,7 @@ for (const signal of ['SIGTERM', 'SIGINT']) {
     child.kill(signal)
 
     const [code, signalOut] = await once(child, 'close')
-    t.is(code, 1)
+    t.is(code, 0)
     t.is(signalOut, null)
     t.is(await out, signal + '\n')
   })

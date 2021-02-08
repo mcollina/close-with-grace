@@ -14,6 +14,8 @@ function closeWithGrace (opts, fn) {
   process.once('uncaughtException', onError)
   process.once('unhandledRejection', onError)
 
+  const sleeped = Symbol('sleeped')
+
   function onSignal (signal) {
     run({ signal })
   }
@@ -40,16 +42,23 @@ function closeWithGrace (opts, fn) {
     process.on('unhandledRejection', afterFirstError)
 
     try {
-      await Promise.race([
+      const res = await Promise.race([
         // We create the timer first as fn
         // might block the event loop
-        sleep(delay),
+        sleep(delay, sleeped),
         fn(out)
       ])
+
+      console.error(res)
+      if (res === sleeped || out.err) {
+        process.exit(1)
+      } else {
+        process.exit(0)
+      }
     } catch (err) {
       console.error(err)
+      process.exit(1)
     }
-    process.exit(1)
   }
 }
 
