@@ -35,6 +35,37 @@ function closeWithGrace (opts, fn) {
     process.exit(1)
   }
 
+  function exec (out) {
+    const res = fn(out, done)
+
+    if (res && typeof res.then === 'function') {
+      return res
+    }
+
+    let _resolve
+    let _reject
+
+    const p = new Promise(function (resolve, reject) {
+      _resolve = resolve
+      _reject = reject
+    })
+
+    return p
+
+    function done (err) {
+      if (!_resolve) {
+        return
+      }
+
+      if (err) {
+        _reject(err)
+        return
+      }
+
+      _resolve()
+    }
+  }
+
   async function run (out) {
     process.on('SIGTERM', afterFirstSignal)
     process.on('SIGINT', afterFirstSignal)
@@ -46,10 +77,9 @@ function closeWithGrace (opts, fn) {
         // We create the timer first as fn
         // might block the event loop
         sleep(delay, sleeped),
-        fn(out)
+        exec(out)
       ])
 
-      console.error(res)
       if (res === sleeped || out.err) {
         process.exit(1)
       } else {
