@@ -1,6 +1,6 @@
 {
   "name": "close-with-grace",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Exit your process, gracefully (if possible)",
   "main": "index.js",
   "devDependencies": {
