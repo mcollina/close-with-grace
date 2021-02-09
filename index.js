@@ -16,6 +16,12 @@ function closeWithGrace (opts, fn) {
 
   const sleeped = Symbol('sleeped')
 
+  return {
+    close () {
+      run({ manual: true })
+    }
+  }
+
   function onSignal (signal) {
     run({ signal })
   }

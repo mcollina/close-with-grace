@@ -143,3 +143,16 @@ for (const event of ['uncaughtException', 'unhandledRejection']) {
     t.is(await out, 'kaboom\n')
   })
 }
+
+test('self close', async (t) => {
+  const child = fork(join(__dirname, 'self-close.js'), {
+    stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+  })
+
+  const out = all(child.stdout)
+  out.catch(() => {})
+
+  const [code] = await once(child, 'close')
+  t.is(code, 0)
+  t.is(await out, 'close called\n')
+})
