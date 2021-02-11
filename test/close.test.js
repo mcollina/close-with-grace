@@ -156,3 +156,23 @@ test('self close', async (t) => {
   t.is(code, 0)
   t.is(await out, 'close called\n')
 })
+
+test('uninstall', async (t) => {
+  const child = fork(join(__dirname, 'uninstall.js'), {
+    stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+  })
+
+  // one line to kickstart the test
+  await once(child.stderr, 'readable')
+  t.pass('readable emitted')
+
+  const out = all(child.stdout)
+  out.catch(() => {})
+
+  child.kill('SIGTERM')
+
+  const [code, signal] = await once(child, 'close')
+  t.is(code, null)
+  t.is(signal, 'SIGTERM')
+  t.is(await out, '')
+})

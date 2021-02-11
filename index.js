@@ -19,6 +19,12 @@ function closeWithGrace (opts, fn) {
   return {
     close () {
       run({ manual: true })
+    },
+    uninstall () {
+      process.removeListener('SIGTERM', onSignal)
+      process.removeListener('SIGINT', onSignal)
+      process.removeListener('uncaughtException', onError)
+      process.removeListener('unhandledRejection', onError)
     }
   }
 
