@@ -7,10 +7,11 @@
     "husky": "^4.3.8",
     "standard": "^16.0.3",
     "tap-dot": "^2.0.0",
-    "tape": "^5.1.1"
+    "tape": "^5.1.1",
+    "tsd": "^0.14.0"
   },
   "scripts": {
-    "test": "standard && tape test/*.test.js | tap-dot"
+    "test": "standard && tape test/*.test.js | tap-dot && tsd"
   },
   "husky": {
     "hooks": {
