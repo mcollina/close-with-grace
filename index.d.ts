@@ -10,7 +10,7 @@ declare namespace closeWithGrace {
   type Signals = 'SIGTERM' | 'SIGINT';
 
   type CloseWithGraceCallback = (
-    { err, signal, manual }: { err: Error, signal: Signals, manual: boolean },
+    { err, signal, manual }: { err?: Error, signal?: Signals, manual?: boolean },
     cb: (error?: Error) => void
   ) => Promise<void> | void
 }
