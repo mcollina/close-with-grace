@@ -56,7 +56,7 @@ If the function rejects with an `Error`, or call the callback with an
 
 Calling `closeWithGrace()` will return an object as formed:
 
-* `close()`: close the process, the `mannual` argument will be set to
+* `close()`: close the process, the `manual` argument will be set to
   true.
 * `uninstall()`: remove all global listeners.
 
