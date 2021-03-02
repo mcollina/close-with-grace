@@ -3,6 +3,8 @@
 const { promisify } = require('util')
 const sleep = promisify(setTimeout)
 
+closeWithGrace.closing = false
+
 function closeWithGrace (opts, fn) {
   if (typeof opts === 'function') {
     fn = opts
@@ -83,6 +85,8 @@ function closeWithGrace (opts, fn) {
     process.on('SIGINT', afterFirstSignal)
     process.on('uncaughtException', afterFirstError)
     process.on('unhandledRejection', afterFirstError)
+
+    closeWithGrace.closing = true
 
     try {
       const res = await Promise.race([
