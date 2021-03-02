@@ -176,3 +176,12 @@ test('uninstall', async (t) => {
   t.is(signal, 'SIGTERM')
   t.is(await out, '')
 })
+
+test('closing state', async (t) => {
+  const child = fork(join(__dirname, 'closing-state.js'), {
+    stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+  })
+
+  const [code] = await once(child, 'close')
+  t.is(code, 0)
+})
