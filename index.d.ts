@@ -7,12 +7,30 @@ declare namespace closeWithGrace {
     delay: number
   }
 
-  type Signals = 'SIGTERM' | 'SIGINT';
-
-  type CloseWithGraceCallback = (
-    { err, signal, manual }: { err?: Error, signal?: Signals, manual?: boolean },
-    cb: (error?: Error) => void
-  ) => Promise<void> | void
+  type Signals = "SIGTERM" | "SIGINT"
+  interface CloseWithGraceCallback {
+    (
+      options: { err?: Error, signal?: Signals, manual?: boolean },
+      cb: (error?: Error) => void
+    ): void
+  }
+  interface CloseWithGraceAsyncCallback {
+    (options: {
+      err?: Error
+      signal?: Signals
+      manual?: boolean
+    }): Promise<void>
+  }
+}
+declare interface CloseWithGraceReturn {
+  /**
+   * Close the process, the manual argument will be set to true.
+   */
+  close: () => void
+  /**
+   *  Remove all global listeners
+   */
+  uninstall: () => void
 }
 
 /**
@@ -28,15 +46,17 @@ import * as closeWithGrace from 'close-with-grace'
     await closeYourServer()
   })
  */
-declare function closeWithGrace (opts?: closeWithGrace.Options | closeWithGrace.CloseWithGraceCallback, fn?: closeWithGrace.CloseWithGraceCallback): {
-  /**
-   * Close the process, the manual argument will be set to true.
-   */
-  close: () => void
-  /**
-   *  Remove all global listeners
-   */
-  uninstall: () => void
-}
+declare function closeWithGrace (
+  opts:
+    | closeWithGrace.CloseWithGraceAsyncCallback
+    | closeWithGrace.CloseWithGraceCallback
+    | closeWithGrace.Options
+): CloseWithGraceReturn
+declare function closeWithGrace (
+  opts: closeWithGrace.Options,
+  fn?:
+    | closeWithGrace.CloseWithGraceAsyncCallback
+    | closeWithGrace.CloseWithGraceCallback
+): CloseWithGraceReturn
 
 export = closeWithGrace

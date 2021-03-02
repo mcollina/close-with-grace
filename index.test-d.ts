@@ -1,22 +1,74 @@
-import { expectType, expectAssignable } from 'tsd'
-import * as closeWithGrace from '.'
-import { Options, CloseWithGraceCallback, Signals } from '.'
+import { expectType, expectAssignable, expectError } from "tsd"
+import * as closeWithGrace from "."
+import {
+  Options,
+  CloseWithGraceCallback,
+  CloseWithGraceAsyncCallback,
+  Signals,
+} from "."
 
-expectAssignable<CloseWithGraceCallback>(async (param: { manual?: boolean }) => { })
-expectAssignable<CloseWithGraceCallback>(async (param: { err?: Error }) => { })
-expectAssignable<CloseWithGraceCallback>(async (param: { signal?: Signals }) => { })
-expectAssignable<CloseWithGraceCallback>((param: { signal?: Signals }, cb: (error?: Error) => void) => { return; })
+type CallbackOptions = {
+  manual?: boolean
+  err?: Error
+  signal?: Signals
+}
 
-expectAssignable<Signals>('SIGINT')
-expectAssignable<Signals>('SIGTERM')
+async function asyncManualCallback (options: Pick<CallbackOptions, "manual">) { }
+async function asyncErrorCallback (options: Pick<CallbackOptions, "err">) { }
+async function asyncSignalCallback (options: Pick<CallbackOptions, "signal">) { }
+async function asyncAllCallback (options: CallbackOptions) { }
+
+function ManualCallback (
+  options: Pick<CallbackOptions, "manual">,
+  cb: (error?: Error) => void
+) {
+  cb()
+  return
+}
+function ErrorCallback (
+  options: Pick<CallbackOptions, "err">,
+  cb: (error?: Error) => void
+) {
+  cb()
+  return
+}
+function SignalCallback (
+  options: Pick<CallbackOptions, "signal">,
+  cb: (error?: Error) => void
+) {
+  cb()
+  return
+}
+function AllCallback (options: CallbackOptions, cb: (error?: Error) => void) {
+  cb()
+  return
+}
+function WrongCallback (options: CallbackOptions, cb: (error?: Error) => void) {
+  cb()
+  return Promise.resolve()
+}
+
+expectAssignable<CloseWithGraceAsyncCallback>(asyncManualCallback)
+expectAssignable<CloseWithGraceAsyncCallback>(asyncErrorCallback)
+expectAssignable<CloseWithGraceAsyncCallback>(asyncSignalCallback)
+expectAssignable<CloseWithGraceAsyncCallback>(asyncAllCallback)
+expectError<CloseWithGraceAsyncCallback>(WrongCallback)
+expectAssignable<CloseWithGraceCallback>(ManualCallback)
+expectAssignable<CloseWithGraceCallback>(ErrorCallback)
+expectAssignable<CloseWithGraceCallback>(SignalCallback)
+expectAssignable<CloseWithGraceCallback>(AllCallback)
+expectAssignable<CloseWithGraceCallback>(WrongCallback)
+
+expectAssignable<Signals>("SIGINT")
+expectAssignable<Signals>("SIGTERM")
 
 expectType<Options>({ delay: 10 })
 
 expectType<{
   close: () => void
   uninstall: () => void
-}>(closeWithGrace({ delay: 100 }, async function ({ signal, err, manual }) { }))
+}>(closeWithGrace({ delay: 100 }, asyncAllCallback))
 expectType<{
   close: () => void
   uninstall: () => void
-}>(closeWithGrace({ delay: 100 }, function ({ manual }: { manual?: boolean }, cb: (error?: Error) => void) { }))
+}>(closeWithGrace({ delay: 100 }, AllCallback))
