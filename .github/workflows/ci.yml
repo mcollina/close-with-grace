@@ -2,8 +2,17 @@ name: ci
 
 on: [push, pull_request]
 
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
+  cancel-in-progress: true
+
 jobs:
   legacy:
+    permissions:
+      contents: read
+
     runs-on: ubuntu-latest
 
     strategy:
@@ -24,9 +33,12 @@ jobs:
 
       - name: Run tests
         run: |
-          npm run test:only
+          npm run test-only
 
   test:
+    permissions:
+      contents: read
+
     runs-on: ubuntu-latest
 
     strategy:
