@@ -72,3 +72,11 @@ expectType<{
   close: () => void
   uninstall: () => void
 }>(closeWithGrace({ delay: 100 }, AllCallback))
+
+closeWithGrace({ delay: 100 }, async function ({ err }) {
+  expectType<Error | undefined>(err)
+})
+
+closeWithGrace(async function ({ err }) {
+  expectType<Error | undefined>(err)
+})
