@@ -4,19 +4,15 @@
   "description": "Exit your process, gracefully (if possible)",
   "main": "index.js",
   "devDependencies": {
-    "husky": "^8.0.0",
+    "@fastify/pre-commit": "^2.0.2",
     "standard": "^17.0.0",
     "tap-dot": "^2.0.0",
     "tape": "^5.1.1",
     "tsd": "^0.28.0"
   },
   "scripts": {
-    "test": "standard && tape test/*.test.js | tap-dot && tsd"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm test"
-    }
+    "test": "standard && npm run test-only && tsd",
+    "test-only": "tape test/*.test.js | tap-dot"
   },
   "repository": {
     "type": "git",
