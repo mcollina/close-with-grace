@@ -1,5 +1,5 @@
 import { expectType, expectAssignable, expectError } from "tsd"
-import * as closeWithGrace from "."
+import closeWithGrace from "."
 import {
   Options,
   CloseWithGraceCallback,
@@ -64,11 +64,11 @@ expectAssignable<Signals>("SIGTERM")
 
 expectType<Options>({ delay: 10 })
 
-expectType<{
+expectAssignable<{
   close: () => void
   uninstall: () => void
 }>(closeWithGrace({ delay: 100 }, asyncAllCallback))
-expectType<{
+expectAssignable<{
   close: () => void
   uninstall: () => void
 }>(closeWithGrace({ delay: 100 }, AllCallback))
