@@ -4,11 +4,11 @@
   "description": "Exit your process, gracefully (if possible)",
   "main": "index.js",
   "devDependencies": {
-    "husky": "^4.3.8",
-    "standard": "^16.0.3",
+    "husky": "^8.0.0",
+    "standard": "^17.0.0",
     "tap-dot": "^2.0.0",
     "tape": "^5.1.1",
-    "tsd": "^0.14.0"
+    "tsd": "^0.28.0"
   },
   "scripts": {
     "test": "standard && tape test/*.test.js | tap-dot && tsd"
