@@ -47,16 +47,24 @@ import * as closeWithGrace from 'close-with-grace'
   })
  */
 declare function closeWithGrace (
-  opts:
-    | closeWithGrace.CloseWithGraceAsyncCallback
-    | closeWithGrace.CloseWithGraceCallback
-    | closeWithGrace.Options
+  fn: closeWithGrace.CloseWithGraceAsyncCallback
+): CloseWithGraceReturn
+declare function closeWithGrace (
+  fn: closeWithGrace.CloseWithGraceCallback
 ): CloseWithGraceReturn
 declare function closeWithGrace (
   opts: closeWithGrace.Options,
-  fn?:
-    | closeWithGrace.CloseWithGraceAsyncCallback
-    | closeWithGrace.CloseWithGraceCallback
+  fn: closeWithGrace.CloseWithGraceAsyncCallback
+): CloseWithGraceReturn
+declare function closeWithGrace (
+  opts: closeWithGrace.Options,
+  fn: closeWithGrace.CloseWithGraceCallback
+): CloseWithGraceReturn
+declare function closeWithGrace (
+  fn: closeWithGrace.CloseWithGraceAsyncCallback
+): CloseWithGraceReturn
+declare function closeWithGrace (
+  fn: closeWithGrace.CloseWithGraceCallback
 ): CloseWithGraceReturn
 
 export = closeWithGrace
