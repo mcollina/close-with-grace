@@ -23,6 +23,26 @@ closeWithGrace({ delay: 500 }, async function ({ signal, err, manual }) {
 })
 ```
 
+### Injecting custom logger
+
+```js
+const closeWithGrace = require('close-with-grace')
+
+// delay is the number of milliseconds for the graceful close to
+// finish.
+closeWithGrace(
+  {
+    delay: 500,
+    logger: { error: (m) => console.error(`[close-with-grace] ${m}`) }
+  },
+  async function ({ signal, err, manual }) {
+  if (err) {
+    console.error(err)
+  }
+  await closeYourServer()
+})
+```
+
 ## API
 
 ### `closeWithGrace([opts], fn({ err, signal, manual }))`
@@ -41,6 +61,8 @@ If it is emitted again, it will terminate the process abruptly.
 
 * `delay`: the numbers of milliseconds before abruptly close the
   process. Default: `10000`.
+
+* `logger`: instance of logger which will be used internally. Default: `10000`.
 
 #### fn({ err, signal, manual } [, cb])
 
