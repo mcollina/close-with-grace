@@ -11,6 +11,7 @@ function closeWithGrace (opts, fn) {
     opts = {}
   }
   const delay = opts.delay ? opts.delay : 10000
+  const logger = opts.logger ? opts.logger : console
   process.once('SIGTERM', onSignal)
   process.once('SIGINT', onSignal)
   process.once('uncaughtException', onError)
@@ -35,7 +36,7 @@ function closeWithGrace (opts, fn) {
   }
 
   function afterFirstSignal (signal) {
-    console.error(`second ${signal}, exiting`)
+    logger.error(`second ${signal}, exiting`)
     process.exit(1)
   }
 
@@ -44,8 +45,8 @@ function closeWithGrace (opts, fn) {
   }
 
   function afterFirstError (err) {
-    console.error('second error, exiting')
-    console.error(err)
+    logger.error('second error, exiting')
+    logger.error(err)
     process.exit(1)
   }
 
@@ -102,7 +103,7 @@ function closeWithGrace (opts, fn) {
         process.exit(0)
       }
     } catch (err) {
-      console.error(err)
+      logger.error(err)
       process.exit(1)
     }
   }

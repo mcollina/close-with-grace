@@ -62,7 +62,10 @@ expectAssignable<CloseWithGraceCallback>(WrongCallback)
 expectAssignable<Signals>("SIGINT")
 expectAssignable<Signals>("SIGTERM")
 
-expectType<Options>({ delay: 10 })
+expectAssignable<Options>({ delay: 10 })
+expectAssignable<Options>({ logger: console })
+expectAssignable<Options>({ logger: console, delay: 10 })
+expectAssignable<Options>({ logger: { error: () => {} } })
 
 expectAssignable<{
   close: () => void
