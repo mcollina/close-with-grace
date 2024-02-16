@@ -127,6 +127,28 @@ for (const signal of ['SIGTERM', 'SIGINT']) {
     t.is(await err, `second ${signal}, exiting\n`)
     t.is(Date.now() - now < 500, true)
   })
+
+  test(`a secong signal (${signal}) calls custom logger`, async (t) => {
+    const child = fork(join(__dirname, 'no-resolve-custom-logger.js'), {
+      stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+    })
+
+    // one line to kickstart the test
+    await once(child.stderr, 'readable')
+    child.stderr.read()
+    t.pass('readable emitted')
+
+    child.kill(signal)
+
+    await once(child.stdout, 'readable')
+
+    const err = all(child.stderr)
+    err.catch(() => {})
+
+    child.kill(signal)
+
+    t.is(await err, `[custom logger] second ${signal}, exiting\n`)
+  })
 }
 
 for (const event of ['uncaughtException', 'unhandledRejection']) {

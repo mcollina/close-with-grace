@@ -1,10 +1,19 @@
 declare namespace closeWithGrace {
+  interface Logger {
+    error(message?: any, ...optionalParams: any[]): void
+  }
+
   interface Options {
     /**
      * The numbers of milliseconds before abruptly close the process
      * @default 10000
      */
-    delay: number
+    delay?: number
+    /**
+     * Instance of logger which will be used internally
+     * @default console
+     */
+    logger?: Logger
   }
 
   type Signals = "SIGTERM" | "SIGINT"
