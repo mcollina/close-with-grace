@@ -62,7 +62,7 @@ If it is emitted again, it will terminate the process abruptly.
 * `delay`: the numbers of milliseconds before abruptly close the
   process. Default: `10000`.
 
-* `logger`: instance of logger which will be used internally. Default: `10000`.
+* `logger`: instance of logger which will be used internally. Default: `console`.
 
 #### fn({ err, signal, manual } [, cb])
 
