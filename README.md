@@ -43,6 +43,26 @@ closeWithGrace(
 })
 ```
 
+### Example with Fastify
+
+```js
+import fastify from 'fastify'
+import closeWithGrace from 'close-with-grace'
+
+const app = fastify()
+
+closeWithGrace(async function ({ signal, err, manual }) {
+  if (err) {
+    app.log.error({ err }, 'server closing with error')
+  } else {
+    app.log.info(`${signal} received, server closing`)
+  }
+  await app.close()
+})
+
+await app.listen()
+```
+
 ## API
 
 ### `closeWithGrace([opts], fn({ err, signal, manual }))`
