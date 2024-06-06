@@ -49,15 +49,20 @@ closeWithGrace(
 import fastify from 'fastify'
 import closeWithGrace from 'close-with-grace'
 
-const app = fastify()
+const app = fastify({ logger: true })
 
-closeWithGrace(async function ({ signal, err, manual }) {
+const closeListeners = closeWithGrace(async function ({ signal, err, manual }) {
   if (err) {
     app.log.error({ err }, 'server closing with error')
   } else {
     app.log.info(`${signal} received, server closing`)
   }
   await app.close()
+})
+
+app.addHook('onClose', (instance, done) => {
+  closeListeners.uninstall()
+  done()
 })
 
 await app.listen()
