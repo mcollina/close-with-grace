@@ -179,6 +179,19 @@ test('self close', async (t) => {
   t.is(await out, 'close called\n')
 })
 
+test('normal close', async (t) => {
+  const child = fork(join(__dirname, 'normal-close.js'), {
+    stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+  })
+
+  const out = all(child.stdout)
+  out.catch(() => {})
+
+  const [code] = await once(child, 'close')
+  t.is(code, 0)
+  t.is(await out, 'close called\n')
+})
+
 test('uninstall', async (t) => {
   const child = fork(join(__dirname, 'uninstall.js'), {
     stdio: ['pipe', 'pipe', 'pipe', 'ipc']
