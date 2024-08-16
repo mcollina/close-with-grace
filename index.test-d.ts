@@ -63,8 +63,17 @@ expectAssignable<Signals>("SIGINT")
 expectAssignable<Signals>("SIGTERM")
 
 expectAssignable<Options>({ delay: 10 })
+expectAssignable<Options>({ delay: null })
+expectAssignable<Options>({ delay: false })
+expectAssignable<Options>({ delay: undefined })
 expectAssignable<Options>({ logger: console })
+expectAssignable<Options>({ logger: null })
+expectAssignable<Options>({ logger: false })
+expectAssignable<Options>({ logger: undefined })
 expectAssignable<Options>({ logger: console, delay: 10 })
+expectAssignable<Options>({ logger: null, delay: null })
+expectAssignable<Options>({ logger: false, delay: false })
+expectAssignable<Options>({ logger: undefined, delay: undefined })
 expectAssignable<Options>({ logger: { error: () => {} } })
 
 expectAssignable<{

@@ -8,12 +8,12 @@ declare namespace closeWithGrace {
      * The numbers of milliseconds before abruptly close the process
      * @default 10000
      */
-    delay?: number
+    delay?: number | undefined | null | false
     /**
      * Instance of logger which will be used internally
      * @default console
      */
-    logger?: Logger
+    logger?: Logger | undefined | null | false
   }
 
   type Signals = "SIGTERM" | "SIGINT"

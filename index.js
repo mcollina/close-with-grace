@@ -10,8 +10,19 @@ function closeWithGrace (opts, fn) {
     fn = opts
     opts = {}
   }
-  const delay = opts.delay ? opts.delay : 10000
-  const logger = opts.logger ? opts.logger : console
+
+  opts = {
+    delay: 10000,
+    logger: console,
+    ...opts
+  }
+
+  const delay = typeof opts.delay === 'number' ? opts.delay : undefined
+  const logger =
+    typeof opts.logger === 'object' || typeof opts.logger === 'function'
+      ? opts.logger
+      : undefined
+
   process.once('SIGTERM', onSignal)
   process.once('SIGINT', onSignal)
   process.once('uncaughtException', onError)
@@ -36,7 +47,7 @@ function closeWithGrace (opts, fn) {
   }
 
   function afterFirstSignal (signal) {
-    logger.error(`second ${signal}, exiting`)
+    if (logger) logger.error(`second ${signal}, exiting`)
     process.exit(1)
   }
 
@@ -45,8 +56,10 @@ function closeWithGrace (opts, fn) {
   }
 
   function afterFirstError (err) {
-    logger.error('second error, exiting')
-    logger.error(err)
+    if (logger) {
+      logger.error('second error, exiting')
+      logger.error(err)
+    }
     process.exit(1)
   }
 
@@ -93,7 +106,7 @@ function closeWithGrace (opts, fn) {
       const res = await Promise.race([
         // We create the timer first as fn
         // might block the event loop
-        sleep(delay, sleeped),
+        ...(typeof delay === 'number' ? [sleep(delay, sleeped)] : []),
         exec(out)
       ])
 
@@ -103,7 +116,7 @@ function closeWithGrace (opts, fn) {
         process.exit(0)
       }
     } catch (err) {
-      logger.error(err)
+      if (logger) logger.error(err)
       process.exit(1)
     }
   }
