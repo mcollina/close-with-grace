@@ -54,7 +54,15 @@ import * as closeWithGrace from 'close-with-grace'
     }
     await closeYourServer()
   })
- */
+
+  // default delay is 10000
+  // to disable delay feature at all, pass falsy value to delay option.
+  closeWithGrace({ delay: false }, () => await somethingUseful())
+
+  // default logger is console
+  // to disable logging at all, pass falsy value to logger option.
+  closeWithGrace({ logger: false }, () => await somethingUseful())
+*/
 declare function closeWithGrace (
   fn: closeWithGrace.CloseWithGraceAsyncCallback
 ): CloseWithGraceReturn
