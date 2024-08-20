@@ -27,6 +27,7 @@ function closeWithGrace (opts, fn) {
   process.once('SIGINT', onSignal)
   process.once('uncaughtException', onError)
   process.once('unhandledRejection', onError)
+  process.once('beforeExit', onNormalExit)
 
   const sleeped = Symbol('sleeped')
 
@@ -39,6 +40,7 @@ function closeWithGrace (opts, fn) {
       process.removeListener('SIGINT', onSignal)
       process.removeListener('uncaughtException', onError)
       process.removeListener('unhandledRejection', onError)
+      process.removeListener('beforeExit', onNormalExit)
     }
   }
 
@@ -61,6 +63,10 @@ function closeWithGrace (opts, fn) {
       logger.error(err)
     }
     process.exit(1)
+  }
+
+  function onNormalExit () {
+    run({})
   }
 
   function exec (out) {
