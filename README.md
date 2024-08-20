@@ -81,6 +81,7 @@ await app.listen()
 * `process.once('SIGINT')`
 * `process.once('uncaughtException')`
 * `process.once('unhandledRejection')`
+* `process.once('beforeExit')`
 
 In case one of them is emitted, it will call the given function.
 If it is emitted again, it will terminate the process abruptly.
