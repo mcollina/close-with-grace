@@ -21,6 +21,10 @@ closeWithGrace({ delay: 500 }, async function ({ signal, err, manual }) {
   }
   await closeYourServer()
 })
+
+// default delay is 10000
+// to disable delay feature at all, pass falsy value to delay option.
+closeWithGrace({ delay: false }, () => await somethingUseful())
 ```
 
 ### Injecting custom logger
@@ -41,6 +45,10 @@ closeWithGrace(
   }
   await closeYourServer()
 })
+
+// default logger is console
+// to disable logging at all, pass falsy value to logger option.
+closeWithGrace({ logger: false }, () => await somethingUseful())
 ```
 
 ### Example with Fastify
@@ -81,8 +89,10 @@ If it is emitted again, it will terminate the process abruptly.
 
 * `delay`: the numbers of milliseconds before abruptly close the
   process. Default: `10000`.
+  - Pass `false`, `null` or `undefined` to disable this feature.
 
 * `logger`: instance of logger which will be used internally. Default: `console`.
+  - Pass `false`, `null` or `undefined` to disable this feature.
 
 #### fn({ err, signal, manual } [, cb])
 

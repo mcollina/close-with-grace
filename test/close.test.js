@@ -4,6 +4,8 @@ const test = require('tape')
 const { fork } = require('child_process')
 const { join } = require('path')
 const { once } = require('events')
+const { promisify } = require('util')
+const sleep = promisify(setTimeout)
 
 async function all (stream) {
   stream.setEncoding('utf8')
@@ -76,8 +78,8 @@ for (const signal of ['SIGTERM', 'SIGINT']) {
     t.is(await out, signal + '\n')
   })
 
-  test(`no delay, close gracefully (${signal})`, async (t) => {
-    const child = fork(join(__dirname, 'no-delay.js'), {
+  test(`default delay, close gracefully (${signal})`, async (t) => {
+    const child = fork(join(__dirname, 'default-delay.js'), {
       stdio: ['pipe', 'pipe', 'pipe', 'ipc']
     })
 
@@ -148,6 +150,68 @@ for (const signal of ['SIGTERM', 'SIGINT']) {
     child.kill(signal)
 
     t.is(await err, `[custom logger] second ${signal}, exiting\n`)
+  })
+
+  test(`a secong signal (${signal}) calls without logger`, async (t) => {
+    const child = fork(join(__dirname, 'no-resolve-without-logger.js'), {
+      stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+    })
+
+    // one line to kickstart the test
+    await once(child.stderr, 'readable')
+    child.stderr.read()
+    t.pass('readable emitted')
+
+    child.kill(signal)
+
+    await once(child.stdout, 'readable')
+
+    const out = all(child.stdout)
+    out.catch(() => {})
+
+    const err = all(child.stderr)
+    err.catch(() => {})
+
+    child.kill(signal)
+
+    const [code, signalOut] = await once(child, 'close')
+    t.is(code, 1)
+    t.is(signalOut, null)
+    t.is(await out, 'fn called\n')
+    t.is(await err, '')
+  })
+
+  test(`a secong signal (${signal}) calls without delay`, async (t) => {
+    const child = fork(join(__dirname, 'no-resolve-without-delay.js'), {
+      stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+    })
+
+    // one line to kickstart the test
+    await once(child.stderr, 'readable')
+    child.stderr.read()
+    t.pass('readable emitted')
+
+    const now = Date.now()
+
+    child.kill(signal)
+
+    await once(child.stdout, 'readable')
+
+    const out = all(child.stdout)
+    out.catch(() => {})
+
+    const err = all(child.stderr)
+    err.catch(() => {})
+
+    await sleep(550)
+    child.kill(signal)
+
+    const [code, signalOut] = await once(child, 'close')
+    t.is(code, 1)
+    t.is(signalOut, null)
+    t.is(await out, 'fn called\n')
+    t.is(await err, `second ${signal}, exiting\n`)
+    t.is(Date.now() - now > 550 && Date.now() - now < 1000, true)
   })
 }
 
