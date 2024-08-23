@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  legacy:
+  legacy-test:
     permissions:
       contents: read
 
