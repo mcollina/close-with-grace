@@ -77,8 +77,17 @@ await app.listen()
 
 `closeWithGrace` adds a global listeners to the events:
 
-* `process.once('SIGTERM')`
+* `process.once('SIGHUP')`
 * `process.once('SIGINT')`
+* `process.once('SIGQUIT')`
+* `process.once('SIGILL')`
+* `process.once('SIGTRAP')`
+* `process.once('SIGABRT')`
+* `process.once('SIGBUS')`
+* `process.once('SIGFPE')`
+* `process.once('SIGSEGV')`
+* `process.once('SIGUSR2')`
+* `process.once('SIGTERM')`
 * `process.once('uncaughtException')`
 * `process.once('unhandledRejection')`
 * `process.once('beforeExit')`

@@ -16,7 +16,7 @@ declare namespace closeWithGrace {
     logger?: Logger | undefined | null | false
   }
 
-  type Signals = "SIGTERM" | "SIGINT"
+  type Signals = 'SIGHUP' | 'SIGINT' | 'SIGQUIT' | 'SIGILL' | 'SIGTRAP' | 'SIGABRT' | 'SIGBUS' | 'SIGFPE' | 'SIGSEGV' | 'SIGUSR2' | 'SIGTERM'
   interface CloseWithGraceCallback {
     (
       options: { err?: Error, signal?: Signals, manual?: boolean },
