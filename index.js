@@ -34,14 +34,14 @@ function closeWithGrace (opts, fn) {
   const sleeped = Symbol('sleeped')
 
   return {
-    close () {
-      run({ manual: true })
-    },
-    uninstall () {
-      signalEvents.forEach((event) => process.removeListener(event, onSignal))
-      errorEvents.forEach((event) => process.removeListener(event, onError))
-      exitEvents.forEach((event) => process.removeListener(event, onNormalExit))
-    }
+    close: () => run({ manual: true }),
+    uninstall: cleanup
+  }
+
+  function cleanup () {
+    signalEvents.forEach((event) => process.removeListener(event, onSignal))
+    errorEvents.forEach((event) => process.removeListener(event, onError))
+    exitEvents.forEach((event) => process.removeListener(event, onNormalExit))
   }
 
   function onSignal (signal) {
@@ -101,7 +101,9 @@ function closeWithGrace (opts, fn) {
   }
 
   async function run (out) {
-    signalEvents.forEach((event) => process.on((event), afterFirstSignal))
+    cleanup()
+
+    signalEvents.forEach((event) => process.on(event, afterFirstSignal))
     errorEvents.forEach((event) => process.on(event, afterFirstError))
 
     closeWithGrace.closing = true
