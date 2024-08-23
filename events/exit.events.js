@@ -1,3 +1,5 @@
+'use strict'
+
 const exitEvents = [
   'beforeExit'
 ]
