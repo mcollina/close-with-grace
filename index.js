@@ -1,5 +1,9 @@
 'use strict'
 
+const { signalEvents } = require('./events/signal.events')
+const { errorEvents } = require('./events/error.events')
+const { exitEvents } = require('./events/exit.events')
+
 const { promisify } = require('util')
 const sleep = promisify(setTimeout)
 
@@ -23,25 +27,21 @@ function closeWithGrace (opts, fn) {
       ? opts.logger
       : undefined
 
-  process.once('SIGTERM', onSignal)
-  process.once('SIGINT', onSignal)
-  process.once('uncaughtException', onError)
-  process.once('unhandledRejection', onError)
-  process.once('beforeExit', onNormalExit)
+  signalEvents.forEach((event) => process.once(event, onSignal))
+  errorEvents.forEach((event) => process.once(event, onError))
+  exitEvents.forEach((event) => process.once(event, onNormalExit))
 
   const sleeped = Symbol('sleeped')
 
   return {
-    close () {
-      run({ manual: true })
-    },
-    uninstall () {
-      process.removeListener('SIGTERM', onSignal)
-      process.removeListener('SIGINT', onSignal)
-      process.removeListener('uncaughtException', onError)
-      process.removeListener('unhandledRejection', onError)
-      process.removeListener('beforeExit', onNormalExit)
-    }
+    close: () => run({ manual: true }),
+    uninstall: cleanup
+  }
+
+  function cleanup () {
+    signalEvents.forEach((event) => process.removeListener(event, onSignal))
+    errorEvents.forEach((event) => process.removeListener(event, onError))
+    exitEvents.forEach((event) => process.removeListener(event, onNormalExit))
   }
 
   function onSignal (signal) {
@@ -101,10 +101,10 @@ function closeWithGrace (opts, fn) {
   }
 
   async function run (out) {
-    process.on('SIGTERM', afterFirstSignal)
-    process.on('SIGINT', afterFirstSignal)
-    process.on('uncaughtException', afterFirstError)
-    process.on('unhandledRejection', afterFirstError)
+    cleanup()
+
+    signalEvents.forEach((event) => process.on(event, afterFirstSignal))
+    errorEvents.forEach((event) => process.on(event, afterFirstError))
 
     closeWithGrace.closing = true
 

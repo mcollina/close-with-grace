@@ -1,5 +1,7 @@
 'use strict'
 
+const { signalEvents } = require('../events/signal.events')
+const { errorEvents } = require('../events/error.events')
 const test = require('tape')
 const { fork } = require('child_process')
 const { join } = require('path')
@@ -37,7 +39,7 @@ test('close abruptly after a timeout', async (t) => {
   t.is(Date.now() - now >= 500, true)
 })
 
-for (const signal of ['SIGTERM', 'SIGINT']) {
+for (const signal of signalEvents) {
   test(`close gracefully (${signal}) async/await`, async (t) => {
     const child = fork(join(__dirname, 'simple.js'), {
       stdio: ['pipe', 'pipe', 'pipe', 'ipc']
@@ -215,7 +217,7 @@ for (const signal of ['SIGTERM', 'SIGINT']) {
   })
 }
 
-for (const event of ['uncaughtException', 'unhandledRejection']) {
+for (const event of errorEvents) {
   test(`close gracefully (${event})`, async (t) => {
     const child = fork(join(__dirname, event + '.js'), {
       stdio: ['pipe', 'pipe', 'pipe', 'ipc']
