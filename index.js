@@ -4,8 +4,7 @@ const { signalEvents } = require('./events/signal.events')
 const { errorEvents } = require('./events/error.events')
 const { exitEvents } = require('./events/exit.events')
 
-const { promisify } = require('util')
-const sleep = promisify(setTimeout)
+const sleep = (timeout, ...args) => new Promise((resolve) => setTimeout(resolve, timeout, ...args))
 
 closeWithGrace.closing = false
 
