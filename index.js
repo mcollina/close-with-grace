@@ -116,7 +116,10 @@ function closeWithGrace (opts, fn) {
         exec(out)
       ])
 
-      if (res === sleeped || out.err) {
+      if (res === sleeped) {
+        if (logger) logger.error(`killed by timeout (${delay}ms)`)
+        process.exit(1)
+      } else if (out.err) {
         process.exit(1)
       } else {
         process.exit(0)
