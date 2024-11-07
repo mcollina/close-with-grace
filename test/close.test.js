@@ -39,6 +39,57 @@ test('close abruptly after a timeout', async (t) => {
   t.is(Date.now() - now >= 500, true)
 })
 
+test('when closed by timeout with default logger should log error', async (t) => {
+  const child = fork(join(__dirname, 'no-resolve.js'), {
+    stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+  })
+
+  // one line to kickstart the test
+  await once(child.stderr, 'readable')
+  t.pass('readable emitted')
+
+  const err = all(child.stderr)
+
+  child.kill('SIGTERM')
+  await once(child, 'close')
+
+  t.match(await err, /killed by timeout/)
+})
+
+test('when closed by timeout with custom logger should log error', async (t) => {
+  const child = fork(join(__dirname, 'no-resolve-custom-logger.js'), {
+    stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+  })
+
+  // one line to kickstart the test
+  await once(child.stderr, 'readable')
+  t.pass('readable emitted')
+
+  const err = all(child.stderr)
+
+  child.kill('SIGTERM')
+  await once(child, 'close')
+
+  t.match(await err, /\[custom logger\] killed by timeout/)
+})
+
+test('when closed by timeout without logger should NOT log error', async (t) => {
+  const child = fork(join(__dirname, 'no-resolve-without-logger.js'), {
+    stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+  })
+
+  // one line to kickstart the test
+  await once(child.stderr, 'readable')
+  t.pass('readable emitted')
+
+  const err = all(child.stderr)
+
+  child.kill('SIGTERM')
+  await once(child, 'close')
+
+  t.doesNotMatch(await err, /killed by timeout/)
+})
+
 for (const signal of signalEvents) {
   test(`close gracefully (${signal}) async/await`, async (t) => {
     const child = fork(join(__dirname, 'simple.js'), {
