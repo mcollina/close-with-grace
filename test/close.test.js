@@ -3,10 +3,10 @@
 const { signalEvents } = require('../events/signal.events')
 const { errorEvents } = require('../events/error.events')
 const test = require('tape')
-const { fork } = require('child_process')
-const { join } = require('path')
-const { once } = require('events')
-const { promisify } = require('util')
+const { fork } = require('node:child_process')
+const { join } = require('node:path')
+const { once } = require('node:events')
+const { promisify } = require('node:util')
 const sleep = promisify(setTimeout)
 
 async function all (stream) {
