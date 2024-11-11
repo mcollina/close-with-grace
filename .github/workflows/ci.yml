@@ -9,32 +9,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  legacy:
-    permissions:
-      contents: read
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x]
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Use Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install
-        run: |
-          npm install --ignore-scripts
-
-      - name: Run tests
-        run: |
-          npm run test-only
-
   test:
     permissions:
       contents: read
