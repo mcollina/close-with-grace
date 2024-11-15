@@ -3,6 +3,7 @@
   "version": "2.1.0",
   "description": "Exit your process, gracefully (if possible)",
   "main": "index.js",
+  "type": "commonjs",
   "devDependencies": {
     "@fastify/pre-commit": "^2.0.2",
     "standard": "^17.0.0",
