@@ -49,7 +49,12 @@ function closeWithGrace (opts, fn) {
   }
 
   function afterFirstSignal (signal) {
-    if (logger) logger.error(`second ${signal}, exiting`)
+    if (typeof opts.onSecondSignal === 'function') {
+      opts.onSecondSignal(signal)
+    } else if (logger) {
+      logger.error(`second ${signal}, exiting`)
+    }
+
     process.exit(1)
   }
 
@@ -58,10 +63,13 @@ function closeWithGrace (opts, fn) {
   }
 
   function afterFirstError (err) {
-    if (logger) {
+    if (typeof opts.onSecondError === 'function') {
+      opts.onSecondError(err)
+    } else if (logger) {
       logger.error('second error, exiting')
       logger.error(err)
     }
+
     process.exit(1)
   }
 
@@ -117,7 +125,12 @@ function closeWithGrace (opts, fn) {
       ])
 
       if (res === sleeped) {
-        if (logger) logger.error(`killed by timeout (${delay}ms)`)
+        if (typeof opts.onTimeout === 'function') {
+          opts.onTimeout(delay)
+        } else if (logger) {
+          logger.error(`killed by timeout (${delay}ms)`)
+        }
+
         process.exit(1)
       } else if (out.err) {
         process.exit(1)

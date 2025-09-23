@@ -73,6 +73,23 @@ test('when closed by timeout with custom logger should log error', async (t) => 
   t.match(await err, /\[custom logger\] killed by timeout/)
 })
 
+test('when closed by timeout should use onTimeout callback', async (t) => {
+  const child = fork(join(__dirname, 'on-timeout.js'), {
+    stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+  })
+
+  // one line to kickstart the test
+  await once(child.stderr, 'readable')
+  t.pass('readable emitted')
+
+  const err = all(child.stderr)
+
+  child.kill('SIGTERM')
+  await once(child, 'close')
+
+  t.match(await err, /onTimeout 500/)
+})
+
 test('when closed by timeout without logger should NOT log error', async (t) => {
   const child = fork(join(__dirname, 'no-resolve-without-logger.js'), {
     stdio: ['pipe', 'pipe', 'pipe', 'ipc']
@@ -180,6 +197,38 @@ for (const signal of signalEvents) {
     t.is(signalOut, null)
     t.is(await out, 'fn called\n')
     t.is(await err, `second ${signal}, exiting\n`)
+    t.is(Date.now() - now < 500, true)
+  })
+
+  test(`a secong signal (${signal}) close abruptly using onSecondSignal`, async (t) => {
+    const child = fork(join(__dirname, 'on-second-signal.js'), {
+      stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+    })
+
+    // one line to kickstart the test
+    await once(child.stderr, 'readable')
+    child.stderr.read()
+    t.pass('readable emitted')
+
+    const now = Date.now()
+
+    child.kill(signal)
+
+    await once(child.stdout, 'readable')
+
+    const out = all(child.stdout)
+    out.catch(() => {})
+
+    const err = all(child.stderr)
+    err.catch(() => {})
+
+    child.kill(signal)
+
+    const [code, signalOut] = await once(child, 'close')
+    t.is(code, 1)
+    t.is(signalOut, null)
+    t.is(await out, 'fn called\n')
+    t.is(await err, `onSecondSignal ${signal}\n`)
     t.is(Date.now() - now < 500, true)
   })
 
@@ -336,4 +385,42 @@ test('closing state', async (t) => {
 
   const [code] = await once(child, 'close')
   t.is(code, 0)
+})
+
+test('when the function throws with custom logger should log error', async (t) => {
+  const child = fork(join(__dirname, 'error.js'), {
+    stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+  })
+
+  // one line to kickstart the test
+  await once(child.stderr, 'readable')
+  t.pass('readable emitted')
+
+  const err = all(child.stderr)
+  err.catch(() => {})
+
+  child.kill('SIGTERM')
+
+  const [code] = await once(child, 'close')
+  t.is(code, 1)
+  t.match(await err, /\[custom logger\] second error, exiting/)
+})
+
+test('when the function throws should use onSecondSignal', async (t) => {
+  const child = fork(join(__dirname, 'on-second-error.js'), {
+    stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+  })
+
+  // one line to kickstart the test
+  await once(child.stderr, 'readable')
+  t.pass('readable emitted')
+
+  const err = all(child.stderr)
+  err.catch(() => {})
+
+  child.kill('SIGTERM')
+
+  const [code] = await once(child, 'close')
+  t.is(code, 1)
+  t.match(await err, /onSecondError kaboom/)
 })
