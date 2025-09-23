@@ -104,6 +104,17 @@ If it is emitted again, it will terminate the process abruptly.
 * `logger`: instance of logger which will be used internally. Default: `console`.
   - Pass `false`, `null` or `undefined` to disable this feature.
 
+* `onSecondError(error)`: A callback to to execute if the process throws an `uncaughtException`
+  or an `unhandledRejection` while `fn` is executing.
+
+* `onSecondSignal(signal)`: A callback to to execute if the process receives another
+  signal while `fn` is executing.
+
+* `onTimeout(delay)`: A callback to to execute if `fn` failed to completed after `delay` milliseconds.
+
+Both `onSecondError`, `onSecondSignal` or `onTimeout` can be used to perform custom logic, but `process.exit(1)`
+will be immediately be invoked after they exit so no asynchronous operations are possible.
+
 #### fn({ err, signal, manual } [, cb])
 
 Execute the given function to perform a graceful close.
