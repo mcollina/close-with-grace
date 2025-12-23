@@ -73,33 +73,18 @@ await app.listen()
 
 ### Skipping specific events
 
-You can skip specific events from triggering the graceful close callback. This is useful when you want to handle certain errors separately, such as with OTEL (OpenTelemetry) or other monitoring tools:
+Skip specific events from triggering the graceful close:
 
 ```js
 import closeWithGrace from 'close-with-grace'
 
-// Skip unhandledRejection and uncaughtException from triggering graceful close
-// These can be handled separately by your error monitoring system
 closeWithGrace(
   { skip: ['unhandledRejection', 'uncaughtException'] },
   async function ({ signal, err, manual }) {
-    // This callback will only be triggered by signals (SIGTERM, SIGINT, etc.)
-    // and beforeExit, but NOT by unhandledRejection or uncaughtException
-    await cleanupResources()
-  }
-)
-
-// You can also skip specific signals
-closeWithGrace(
-  { skip: ['SIGTERM'] },
-  async function ({ signal, err, manual }) {
-    // This callback will NOT be triggered by SIGTERM
     await cleanupResources()
   }
 )
 ```
-
-Note: When you skip an error event like `uncaughtException` or `unhandledRejection`, a no-op handler is automatically attached to prevent the process from crashing. Similarly, when you skip a signal, a no-op handler prevents the default exit behavior. This keeps your process running so you can handle these events with your own custom logic.
 
 ## API
 
@@ -135,9 +120,7 @@ If it is emitted again, it will terminate the process abruptly.
   - Pass `false`, `null` or `undefined` to disable this feature.
 
 * `skip`: an array of event names to skip from triggering the graceful close callback. Default: `[]`.
-  - You can skip any combination of signals (`SIGHUP`, `SIGINT`, `SIGQUIT`, `SIGILL`, `SIGTRAP`, `SIGABRT`, `SIGBUS`, `SIGFPE`, `SIGSEGV`, `SIGUSR2`, `SIGTERM`), error events (`uncaughtException`, `unhandledRejection`), or exit events (`beforeExit`).
-  - Example: `skip: ['unhandledRejection', 'uncaughtException']` - useful when these errors are handled separately (e.g., with OTEL) and you don't want them to trigger the graceful close.
-  - Note: Skipped error events and signals will still have a no-op handler attached to prevent the process from crashing or exiting with the default behavior.
+  - Example: `skip: ['unhandledRejection', 'uncaughtException', 'SIGTERM']`
 
 * `onSecondError(error)`: A callback to execute if the process throws an `uncaughtException`
   or an `unhandledRejection` while `fn` is executing.

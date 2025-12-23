@@ -6,7 +6,7 @@ declare namespace closeWithGrace {
   type Signals = 'SIGHUP' | 'SIGINT' | 'SIGQUIT' | 'SIGILL' | 'SIGTRAP' | 'SIGABRT' | 'SIGBUS' | 'SIGFPE' | 'SIGSEGV' | 'SIGUSR2' | 'SIGTERM'
   type ErrorEvents = 'uncaughtException' | 'unhandledRejection'
   type ExitEvents = 'beforeExit'
-  type AllEvents = Signals | ErrorEvents | ExitEvents
+  export type AllEvents = Signals | ErrorEvents | ExitEvents
   interface Options {
     /**
      * The numbers of milliseconds before abruptly close the process
