@@ -3,6 +3,10 @@ declare namespace closeWithGrace {
     error(message?: any, ...optionalParams: any[]): void
   }
 
+  type Signals = 'SIGHUP' | 'SIGINT' | 'SIGQUIT' | 'SIGILL' | 'SIGTRAP' | 'SIGABRT' | 'SIGBUS' | 'SIGFPE' | 'SIGSEGV' | 'SIGUSR2' | 'SIGTERM'
+  type ErrorEvents = 'uncaughtException' | 'unhandledRejection'
+  type ExitEvents = 'beforeExit'
+  type AllEvents = Signals | ErrorEvents | ExitEvents
   interface Options {
     /**
      * The numbers of milliseconds before abruptly close the process
@@ -14,9 +18,12 @@ declare namespace closeWithGrace {
      * @default console
      */
     logger?: Logger | undefined | null | false
+    /**
+     * Array of event names to skip from triggering the graceful close
+     * @example ['unhandledRejection', 'uncaughtException', 'SIGTERM']
+     */
+    skip?: AllEvents[]
   }
-
-  type Signals = 'SIGHUP' | 'SIGINT' | 'SIGQUIT' | 'SIGILL' | 'SIGTRAP' | 'SIGABRT' | 'SIGBUS' | 'SIGFPE' | 'SIGSEGV' | 'SIGUSR2' | 'SIGTERM'
   interface CloseWithGraceCallback {
     (
       options: { err?: Error, signal?: Signals, manual?: boolean },
