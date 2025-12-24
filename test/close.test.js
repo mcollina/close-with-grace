@@ -424,3 +424,22 @@ test('when the function throws should use onSecondSignal', async (t) => {
   t.is(code, 1)
   t.match(await err, /onSecondError kaboom/)
 })
+
+test('skip events does not trigger callback', async (t) => {
+  const child = fork(join(__dirname, 'skip-multiple.js'), {
+    stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+  })
+
+  await once(child.stderr, 'readable')
+
+  let stdout = ''
+  child.stdout.on('data', (chunk) => { stdout += chunk })
+
+  child.kill('SIGTERM')
+  await sleep(500)
+
+  child.kill('SIGKILL')
+  await once(child, 'close')
+
+  t.doesNotMatch(stdout, /callback called/, 'callback should not be called')
+})

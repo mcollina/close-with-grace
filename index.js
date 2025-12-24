@@ -27,9 +27,15 @@ function closeWithGrace (opts, fn) {
       ? opts.logger
       : undefined
 
-  signalEvents.forEach((event) => process.once(event, onSignal))
-  errorEvents.forEach((event) => process.once(event, onError))
-  exitEvents.forEach((event) => process.once(event, onNormalExit))
+  const skip = Array.isArray(opts.skip) ? opts.skip : []
+
+  const filteredSignalEvents = signalEvents.filter((event) => !skip.includes(event))
+  const filteredErrorEvents = errorEvents.filter((event) => !skip.includes(event))
+  const filteredExitEvents = exitEvents.filter((event) => !skip.includes(event))
+
+  filteredSignalEvents.forEach((event) => process.once(event, onSignal))
+  filteredErrorEvents.forEach((event) => process.once(event, onError))
+  filteredExitEvents.forEach((event) => process.once(event, onNormalExit))
 
   const sleeped = Symbol('sleeped')
 
@@ -39,9 +45,9 @@ function closeWithGrace (opts, fn) {
   }
 
   function cleanup () {
-    signalEvents.forEach((event) => process.removeListener(event, onSignal))
-    errorEvents.forEach((event) => process.removeListener(event, onError))
-    exitEvents.forEach((event) => process.removeListener(event, onNormalExit))
+    filteredSignalEvents.forEach((event) => process.removeListener(event, onSignal))
+    filteredErrorEvents.forEach((event) => process.removeListener(event, onError))
+    filteredExitEvents.forEach((event) => process.removeListener(event, onNormalExit))
   }
 
   function onSignal (signal) {
@@ -111,8 +117,8 @@ function closeWithGrace (opts, fn) {
   async function run (out) {
     cleanup()
 
-    signalEvents.forEach((event) => process.on(event, afterFirstSignal))
-    errorEvents.forEach((event) => process.on(event, afterFirstError))
+    filteredSignalEvents.forEach((event) => process.on(event, afterFirstSignal))
+    filteredErrorEvents.forEach((event) => process.on(event, afterFirstError))
 
     closeWithGrace.closing = true
 

@@ -75,6 +75,12 @@ expectAssignable<Options>({ logger: null, delay: null })
 expectAssignable<Options>({ logger: false, delay: false })
 expectAssignable<Options>({ logger: undefined, delay: undefined })
 expectAssignable<Options>({ logger: { error: () => {} } })
+expectAssignable<Options>({ skip: ['unhandledRejection', 'uncaughtException'] })
+expectAssignable<Options>({ skip: ['SIGTERM', 'SIGINT'] })
+expectAssignable<Options>({ skip: ['beforeExit'] })
+expectAssignable<Options>({ skip: [] })
+expectError<Options>({ skip: ['INVALID'] })
+expectAssignable<Options>({ delay: 100, logger: console, skip: ['SIGTERM'] })
 
 expectAssignable<{
   close: () => void
