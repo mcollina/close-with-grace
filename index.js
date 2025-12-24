@@ -33,16 +33,6 @@ function closeWithGrace (opts, fn) {
   const filteredErrorEvents = errorEvents.filter((event) => !skip.includes(event))
   const filteredExitEvents = exitEvents.filter((event) => !skip.includes(event))
 
-  // Add dummy handlers for skipped error events to prevent process crash
-  const skippedErrorEvents = errorEvents.filter((event) => skip.includes(event))
-  const dummyErrorHandler = () => {}
-  skippedErrorEvents.forEach((event) => process.on(event, dummyErrorHandler))
-
-  // Add dummy handlers for skipped signal events to prevent default exit behavior
-  const skippedSignalEvents = signalEvents.filter((event) => skip.includes(event))
-  const dummySignalHandler = () => {}
-  skippedSignalEvents.forEach((event) => process.on(event, dummySignalHandler))
-
   filteredSignalEvents.forEach((event) => process.once(event, onSignal))
   filteredErrorEvents.forEach((event) => process.once(event, onError))
   filteredExitEvents.forEach((event) => process.once(event, onNormalExit))
@@ -58,8 +48,6 @@ function closeWithGrace (opts, fn) {
     filteredSignalEvents.forEach((event) => process.removeListener(event, onSignal))
     filteredErrorEvents.forEach((event) => process.removeListener(event, onError))
     filteredExitEvents.forEach((event) => process.removeListener(event, onNormalExit))
-    skippedErrorEvents.forEach((event) => process.removeListener(event, dummyErrorHandler))
-    skippedSignalEvents.forEach((event) => process.removeListener(event, dummySignalHandler))
   }
 
   function onSignal (signal) {
