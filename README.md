@@ -71,6 +71,26 @@ closeWithGrace(async function ({ signal, err, manual }) {
 await app.listen()
 ```
 
+### Skipping specific events
+
+Skip specific events from triggering the graceful close. Note: You are responsible for handling skipped events yourself.
+
+```js
+import closeWithGrace from 'close-with-grace'
+
+// Handle errors separately
+process.on('unhandledRejection', (err) => {
+  // Your custom error handling
+})
+
+closeWithGrace(
+  { skip: ['unhandledRejection', 'uncaughtException'] },
+  async function ({ signal, err, manual }) {
+    await cleanupResources()
+  }
+)
+```
+
 ## API
 
 ### `closeWithGrace([opts], fn({ err, signal, manual }))`
@@ -103,6 +123,10 @@ If it is emitted again, it will terminate the process abruptly.
 
 * `logger`: instance of logger which will be used internally. Default: `console`.
   - Pass `false`, `null` or `undefined` to disable this feature.
+
+* `skip`: an array of event names to skip from triggering the graceful close callback. Default: `[]`.
+  - Example: `skip: ['unhandledRejection', 'uncaughtException', 'SIGTERM']`
+  - Note: You must handle skipped events yourself, otherwise they may cause the process to crash or exit unexpectedly.
 
 * `onSecondError(error)`: A callback to execute if the process throws an `uncaughtException`
   or an `unhandledRejection` while `fn` is executing.
