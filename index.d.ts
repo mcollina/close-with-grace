@@ -23,6 +23,18 @@ declare namespace closeWithGrace {
      * @example ['unhandledRejection', 'uncaughtException', 'SIGTERM']
      */
     skip?: AllEvents[]
+    /**
+     * Callback to execute if another error event is emitted while closing.
+     */
+    onSecondError?: (error: unknown) => void
+    /**
+     * Callback to execute if another signal is received while closing.
+     */
+    onSecondSignal?: (signal: Signals) => void
+    /**
+     * Callback to execute when graceful close times out.
+     */
+    onTimeout?: (delay: number) => void
   }
   interface CloseWithGraceCallback {
     (
