@@ -80,6 +80,12 @@ expectAssignable<Options>({ skip: ['SIGTERM', 'SIGINT'] })
 expectAssignable<Options>({ skip: ['beforeExit'] })
 expectAssignable<Options>({ skip: [] })
 expectError<Options>({ skip: ['INVALID'] })
+expectAssignable<Options>({ onSecondError: (error) => { expectType<unknown>(error) } })
+expectAssignable<Options>({ onSecondSignal: (signal) => { expectType<Signals>(signal) } })
+expectAssignable<Options>({ onTimeout: (delay) => { expectType<number>(delay) } })
+expectError<Options>({ onSecondError: 'nope' })
+expectError<Options>({ onSecondSignal: 'nope' })
+expectError<Options>({ onTimeout: 'nope' })
 expectAssignable<Options>({ delay: 100, logger: console, skip: ['SIGTERM'] })
 
 expectAssignable<{
