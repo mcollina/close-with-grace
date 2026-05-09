@@ -12,8 +12,9 @@
     "tstyche": "^7.0.0"
   },
   "scripts": {
-    "test": "standard && npm run test-only && tstyche",
-    "test-only": "tape test/*.test.js | tap-dot"
+    "test": "standard && npm run test-only",
+    "test-only": "tape test/*.test.js | tap-dot",
+    "test:typescript": "tstyche"
   },
   "repository": {
     "type": "git",
