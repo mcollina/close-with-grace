@@ -9,11 +9,12 @@
     "standard": "^17.0.0",
     "tap-dot": "^2.0.0",
     "tape": "^5.1.1",
-    "tsd": "^0.28.0"
+    "tstyche": "^7.0.0"
   },
   "scripts": {
-    "test": "standard && npm run test-only && tsd",
-    "test-only": "tape test/*.test.js | tap-dot"
+    "test": "standard && npm run test-only",
+    "test-only": "tape test/*.test.js | tap-dot",
+    "test:typescript": "tstyche"
   },
   "repository": {
     "type": "git",
