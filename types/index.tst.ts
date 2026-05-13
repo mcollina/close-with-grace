@@ -54,6 +54,7 @@ expect<CloseWithGraceAsyncCallback>().type.toBeAssignableFrom(asyncErrorCallback
 expect<CloseWithGraceAsyncCallback>().type.toBeAssignableFrom(asyncSignalCallback)
 expect<CloseWithGraceAsyncCallback>().type.toBeAssignableFrom(asyncAllCallback)
 expect<CloseWithGraceAsyncCallback>().type.not.toBeAssignableFrom(WrongCallback)
+
 expect<CloseWithGraceCallback>().type.toBeAssignableFrom(ManualCallback)
 expect<CloseWithGraceCallback>().type.toBeAssignableFrom(ErrorCallback)
 expect<CloseWithGraceCallback>().type.toBeAssignableFrom(SignalCallback)
